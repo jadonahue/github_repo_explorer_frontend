@@ -31,8 +31,12 @@ const HomePage = () => {
             const data = await searchGithubRepos(search, token);
 
             setRepos(data);
-        } catch (err: any) {
-            setError(err.message || 'Something went wrong');
+        } catch (error) {
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('Something went wrong');
+            }
         } finally {
             setLoading(false);
         }
