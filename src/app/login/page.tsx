@@ -8,8 +8,15 @@ export default function LoginPage() {
     const router = useRouter();
 
     // Destructure global state and setters from AuthStore
-    const { email, setEmail, password, setPassword, error, setError } =
-        useAuthStore();
+    const {
+        email,
+        setEmail,
+        password,
+        setPassword,
+        error,
+        setError,
+        setToken,
+    } = useAuthStore();
 
     // Handle form submit
     const handleLogin = async (e: React.FormEvent) => {
@@ -21,7 +28,8 @@ export default function LoginPage() {
             const data = await loginUser(email, password);
 
             // Store token locally (for now using localStorage; could switch to cookies later)
-            localStorage.setItem('token', data.token);
+            // localStorage.setItem('token', data.token); // This was original direct local storage
+            setToken(data.token); // ✅ Test update the global store
 
             // Redirect to home or favorites after successful login
             router.push('/home');

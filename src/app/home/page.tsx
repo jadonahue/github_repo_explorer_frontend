@@ -26,7 +26,7 @@ const HomePage = () => {
 
         try {
             // Get auth token from localStorage (set at login)
-            const token = localStorage.getItem('token'); // or wherever you store it
+            const token = localStorage.getItem('token');
 
             if (!token) {
                 throw new Error('User not authenticated');
@@ -67,7 +67,6 @@ const HomePage = () => {
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-
                 {repos.map((repo) => (
                     <RepoCard
                         key={repo.repo_id}
