@@ -22,6 +22,8 @@ interface RepoStore {
     setLoading: (l: boolean) => void;
     error: string;
     setError: (e: string) => void;
+    favorites: number[]; // Testing Store repo IDs that are saved
+    setFavorites: (ids: number[]) => void;
 }
 
 // Create a context object (but without default values)
@@ -35,6 +37,7 @@ export const RepoProvider = ({ children }: { children: React.ReactNode }) => {
     const [repos, setRepos] = useState<Repo[]>([]); // List of fetched repos
     const [loading, setLoading] = useState(false); // Indicates fetch in progress
     const [error, setError] = useState(''); // Any error messages to show to user
+    const [favorites, setFavorites] = useState<number[]>([]);
 
     return (
         <RepoContext.Provider
@@ -47,6 +50,8 @@ export const RepoProvider = ({ children }: { children: React.ReactNode }) => {
                 setLoading,
                 error,
                 setError,
+                favorites,
+                setFavorites,
             }}
         >
             {children}

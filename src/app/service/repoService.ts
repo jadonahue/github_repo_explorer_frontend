@@ -54,3 +54,32 @@ export async function searchGithubRepos(username: string, token: string) {
         })
     );
 }
+
+/**
+ * Save a repository to the user's favorites via backend
+ */
+export async function saveRepoToFavorites(repo: Repo, token: string) {
+    const response = await fetch('http://localhost:3001/user/favorites', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+            repo_id: repo.repo_id,
+            repo_name: repo.repo_name,
+            description: repo.description,
+            stars: repo.stars,
+            html_url: repo.url, 
+            language: repo.language,
+        }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to save favorite');
+    }
+
+    return data.favorite;
+}

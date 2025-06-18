@@ -1,6 +1,7 @@
 'use client';
 
 import { searchGithubRepos } from '../service/repoService'; // Abstracted API call to backend
+import { saveRepoToFavorites } from '../service/repoService';
 import { useRepoStore } from '../store/repoStore'; // Custom hook to access global repo state
 import RepoCard from '../components/RepoCard'; // Component for displaying individual repos
 
@@ -66,14 +67,39 @@ const HomePage = () => {
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+
                 {repos.map((repo) => (
                     <RepoCard
                         key={repo.repo_id}
                         name={repo.repo_name}
-                        description={repo.description ?? 'No description'}
+                        description={repo.description}
                         stars={repo.stars}
                         url={repo.url}
-                        language={repo.language ?? 'Unknown'}
+                        language={repo.language}
+                        onSave={async () => {
+                            try {
+                                const token = localStorage.getItem('token');
+                                if (!token)
+                                    throw new Error('Not authenticated');
+
+                                await saveRepoToFavorites(repo, token);
+
+                                alert('Saved to favorites!');
+                            } catch (error) {
+                                if (error instanceof Error) {
+                                    console.error(
+                                        'GitHub API error:',
+                                        error.message
+                                    );
+                                    alert(
+                                        'Failed to save repo: ' + error.message
+                                    );
+                                } else {
+                                    console.error('Unknown error:', error);
+                                    alert('Something went wrong while saving.');
+                                }
+                            }
+                        }}
                     />
                 ))}
             </ul>
