@@ -30,25 +30,28 @@ const HomePage = () => {
         setFavorites, // Sets favorite repos
     } = useRepoStore();
 
+    // On token change, load user's favorites from backend
     useEffect(() => {
-        if (token) {
-            fetchFavorites(token)
-                .then((ids) => {
-                    console.log('Loaded favorites from backend:', ids);
-                    setFavorites(ids);
+        const loadFavorites = async () => {
+            if (!token) return; // Exit if not logged in
 
-                    // Mark any previously loaded repos as favorites
-                    setRepos((prevRepos) =>
-                        markReposWithFavorites(prevRepos, ids)
-                    );
-                })
-                .catch((err) => {
-                    console.error('Failed to load favorites:', err);
-                });
-        }
+            try {
+                const ids = await fetchFavorites(token); // Get saved repo_ids
+                console.log('Loaded favorites from backend:', ids);
+
+                setFavorites(ids); // Save favorites in global store
+
+                // Update each repo's isFavorite flag based on saved IDs
+                setRepos((prevRepos) => markReposWithFavorites(prevRepos, ids));
+            } catch (error) {
+                console.error('Failed to load favorites:', error);
+            }
+        };
+
+        loadFavorites();
     }, [token, setFavorites, setRepos]);
 
-    // Handle search form submission
+    // Handle form submit: fetch GitHub repos for given username
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -59,28 +62,29 @@ const HomePage = () => {
                 throw new Error('User not authenticated');
             }
 
-            // Call backend to fetch GitHub repos for the entered username
+            // Call backend -> GitHub API -> return repo list
             const data = await searchGithubRepos(search, token);
 
+            // Normalize repo_id to number for consistent comparison
             const normalizedRepos = data.map((repo) => ({
                 ...repo,
                 repo_id: Number(repo.repo_id), // Ensure IDs are numbers for matching
             }));
 
-            // Get fresh list of favorites (after refresh)
+            // Reload fresh favorite IDs in case they changed
             const favoriteIds = (await fetchFavorites(token)).map((id) =>
                 Number(id)
             );
 
-            setFavorites(favoriteIds); // update global store so rest of UI also syncs
+            setFavorites(favoriteIds); // Sync global favorites state
 
-            // Mark each repo with isFavorite
+            //  Mark repos with isFavorite: true/false
             const updatedRepos = markReposWithFavorites(
                 normalizedRepos,
                 favoriteIds
             );
 
-            // Update global repo list
+            // Save updated list in global store
             setRepos(updatedRepos);
         } catch (error) {
             // Set user-friendly error message
@@ -98,6 +102,8 @@ const HomePage = () => {
     return (
         <div>
             <div>Home Page</div>
+
+            {/* Search bar for GitHub username */}
             <form onSubmit={handleSearch}>
                 <input
                     type="text"
@@ -108,9 +114,13 @@ const HomePage = () => {
                 <button type="submit">Search</button>
             </form>
 
+            {/* Loading state */}
             {loading && <p>Loading...</p>}
+
+            {/* Error state */}
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
+            {/* Display repos */}
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {repos.map((repo) => {
                     return (
@@ -122,12 +132,12 @@ const HomePage = () => {
                             url={repo.url}
                             language={repo.language}
                             isFavorite={repo.isFavorite ?? false}
+                            // Save repo to favorites
                             onSave={async () => {
                                 try {
                                     if (!token)
                                         throw new Error('Not authenticated');
                                     await saveRepoToFavorites(repo, token);
-                                    alert('Saved to favorites!');
                                     const newFavorites = [
                                         ...favorites,
                                         repo.repo_id,
@@ -144,6 +154,7 @@ const HomePage = () => {
                                     console.error(error);
                                 }
                             }}
+                            // Remove repo from favorites
                             onUnsave={async () => {
                                 try {
                                     if (!token)
@@ -152,7 +163,6 @@ const HomePage = () => {
                                         repo.repo_id,
                                         token
                                     );
-                                    alert('Removed from favorites!');
                                     const newFavorites = favorites.filter(
                                         (id) => id !== repo.repo_id
                                     );
