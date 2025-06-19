@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import {
     searchGithubRepos,
     saveRepoToFavorites,
+    unsaveRepoFromFavorites,
     fetchFavorites,
 } from '../service/repoService'; // Abstracted API call to backend
 import { useRepoStore } from '../store/repoStore'; // Custom hook to access global repo state
@@ -73,13 +74,13 @@ const HomePage = () => {
 
             setFavorites(favoriteIds); // update global store so rest of UI also syncs
 
-            // ✅ Mark each repo with isFavorite
+            // Mark each repo with isFavorite
             const updatedRepos = markReposWithFavorites(
                 normalizedRepos,
                 favoriteIds
             );
 
-            // ✅ Update global repo list
+            // Update global repo list
             setRepos(updatedRepos);
         } catch (error) {
             // Set user-friendly error message
@@ -127,14 +128,11 @@ const HomePage = () => {
                                         throw new Error('Not authenticated');
                                     await saveRepoToFavorites(repo, token);
                                     alert('Saved to favorites!');
-
                                     const newFavorites = [
                                         ...favorites,
                                         repo.repo_id,
                                     ];
                                     setFavorites(newFavorites);
-
-                                    // Re-mark all repos with new favorites
                                     setRepos((prevRepos) =>
                                         markReposWithFavorites(
                                             prevRepos,
@@ -143,6 +141,30 @@ const HomePage = () => {
                                     );
                                 } catch (error) {
                                     alert('Failed to save repo');
+                                    console.error(error);
+                                }
+                            }}
+                            onUnsave={async () => {
+                                try {
+                                    if (!token)
+                                        throw new Error('Not authenticated');
+                                    await unsaveRepoFromFavorites(
+                                        repo.repo_id,
+                                        token
+                                    );
+                                    alert('Removed from favorites!');
+                                    const newFavorites = favorites.filter(
+                                        (id) => id !== repo.repo_id
+                                    );
+                                    setFavorites(newFavorites);
+                                    setRepos((prevRepos) =>
+                                        markReposWithFavorites(
+                                            prevRepos,
+                                            newFavorites
+                                        )
+                                    );
+                                } catch (error) {
+                                    alert('Failed to remove favorite');
                                     console.error(error);
                                 }
                             }}

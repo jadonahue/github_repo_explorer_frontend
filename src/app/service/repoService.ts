@@ -105,6 +105,29 @@ export async function fetchFavorites(token: string): Promise<number[]> {
         ? data.favorites
         : [];
 
-    // // Convert array of repo objects into array of repo IDs
+    // Convert array of repo objects into array of repo IDs
     return favoritesArray.map((repo: { repo_id: number }) => repo.repo_id);
+}
+
+/**
+ * Unsave (remove) a repo from the user's favorites
+ */
+export async function unsaveRepoFromFavorites(repoId: number, token: string) {
+    const response = await fetch(
+        `http://localhost:3001/user/favorites/${repoId}`,
+        {
+            method: 'DELETE',
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || 'Failed to remove favorite');
+    }
+
+    return data;
 }

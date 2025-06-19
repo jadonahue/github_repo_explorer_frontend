@@ -7,6 +7,7 @@ interface RepoCardProps {
     url: string;
     language: string;
     onSave?: () => void;
+    onUnsave?: () => void;
     isFavorite?: boolean;
 }
 
@@ -17,6 +18,7 @@ const RepoCard: React.FC<RepoCardProps> = ({
     url,
     language,
     onSave,
+    onUnsave,
     isFavorite,
 }) => {
     return (
@@ -28,12 +30,16 @@ const RepoCard: React.FC<RepoCardProps> = ({
                     </a>
                 </h2>
 
-                {onSave && (
+                {(onSave || onUnsave) && (
                     <button
-                        onClick={onSave}
-                        className="text-sm bg-blue-100 text-blue-600 px-3 py-1 rounded-md hover:bg-blue-200"
+                        onClick={isFavorite ? onUnsave : onSave}
+                        className={`px-4 py-2 rounded transition-colors duration-300 ${
+                            isFavorite
+                                ? 'bg-red-500 hover:bg-red-600 text-white'
+                                : 'bg-blue-500 hover:bg-blue-600 text-white'
+                        }`}
                     >
-                        {isFavorite ? 'Saved' : 'Save'}
+                        {isFavorite ? 'Unsave' : 'Save'}
                     </button>
                 )}
             </div>
