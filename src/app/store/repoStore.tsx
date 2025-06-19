@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useState } from 'react';
 
-// Define the shape of a single GitHub repo in your app
+// Define the shape of a single GitHub repo in app
 export interface Repo {
     repo_id: number;
     repo_name: string;
@@ -10,6 +10,7 @@ export interface Repo {
     stars: number;
     url: string;
     language: string;
+    isFavorite?: boolean; // Flag to mark if repo is favorited by user
 }
 
 // Define the shape of the global repo store (what it manages)
@@ -17,12 +18,14 @@ interface RepoStore {
     search: string;
     setSearch: (s: string) => void;
     repos: Repo[];
-    setRepos: (repos: Repo[]) => void;
+    // setRepos: (repos: Repo[]) => void;
+    setRepos: (repos: Repo[] | ((prev: Repo[]) => Repo[])) => void; // Support functional update pattern for setState
+
     loading: boolean;
     setLoading: (l: boolean) => void;
     error: string;
     setError: (e: string) => void;
-    favorites: number[]; // Testing Store repo IDs that are saved
+    favorites: number[]; // Store repo IDs that are saved
     setFavorites: (ids: number[]) => void;
 }
 
@@ -37,7 +40,7 @@ export const RepoProvider = ({ children }: { children: React.ReactNode }) => {
     const [repos, setRepos] = useState<Repo[]>([]); // List of fetched repos
     const [loading, setLoading] = useState(false); // Indicates fetch in progress
     const [error, setError] = useState(''); // Any error messages to show to user
-    const [favorites, setFavorites] = useState<number[]>([]);
+    const [favorites, setFavorites] = useState<number[]>([]); // Repo IDs user saved as favorites
 
     return (
         <RepoContext.Provider

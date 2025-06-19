@@ -1,11 +1,20 @@
 'use client';
 
-import { searchGithubRepos } from '../service/repoService'; // Abstracted API call to backend
-import { saveRepoToFavorites } from '../service/repoService';
+import { useEffect } from 'react';
+import {
+    searchGithubRepos,
+    saveRepoToFavorites,
+    fetchFavorites,
+} from '../service/repoService'; // Abstracted API call to backend
 import { useRepoStore } from '../store/repoStore'; // Custom hook to access global repo state
+import { useAuthStore } from '../store/authStore';
 import RepoCard from '../components/RepoCard'; // Component for displaying individual repos
+import { markReposWithFavorites } from '../utils/markFavorites';
 
 const HomePage = () => {
+    // Destructure token from authStore
+    const { token } = useAuthStore();
+
     // Destructure global state and updater functions from the store
     const {
         search, // GitHub username entered by user
@@ -16,7 +25,27 @@ const HomePage = () => {
         setError, // Sets the error message
         loading, // Is data currently being fetched?
         setLoading, // Updates loading status
+        favorites, // Favorite repos
+        setFavorites, // Sets favorite repos
     } = useRepoStore();
+
+    useEffect(() => {
+        if (token) {
+            fetchFavorites(token)
+                .then((ids) => {
+                    console.log('Loaded favorites from backend:', ids);
+                    setFavorites(ids);
+
+                    // Mark any previously loaded repos as favorites
+                    setRepos((prevRepos) =>
+                        markReposWithFavorites(prevRepos, ids)
+                    );
+                })
+                .catch((err) => {
+                    console.error('Failed to load favorites:', err);
+                });
+        }
+    }, [token, setFavorites, setRepos]);
 
     // Handle search form submission
     const handleSearch = async (e: React.FormEvent) => {
@@ -25,9 +54,6 @@ const HomePage = () => {
         setLoading(true);
 
         try {
-            // Get auth token from localStorage (set at login)
-            const token = localStorage.getItem('token');
-
             if (!token) {
                 throw new Error('User not authenticated');
             }
@@ -35,8 +61,26 @@ const HomePage = () => {
             // Call backend to fetch GitHub repos for the entered username
             const data = await searchGithubRepos(search, token);
 
-            // Store result in global state
-            setRepos(data);
+            const normalizedRepos = data.map((repo) => ({
+                ...repo,
+                repo_id: Number(repo.repo_id), // Ensure IDs are numbers for matching
+            }));
+
+            // Get fresh list of favorites (after refresh)
+            const favoriteIds = (await fetchFavorites(token)).map((id) =>
+                Number(id)
+            );
+
+            setFavorites(favoriteIds); // update global store so rest of UI also syncs
+
+            // ✅ Mark each repo with isFavorite
+            const updatedRepos = markReposWithFavorites(
+                normalizedRepos,
+                favoriteIds
+            );
+
+            // ✅ Update global repo list
+            setRepos(updatedRepos);
         } catch (error) {
             // Set user-friendly error message
             if (error instanceof Error) {
@@ -67,40 +111,44 @@ const HomePage = () => {
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {repos.map((repo) => (
-                    <RepoCard
-                        key={repo.repo_id}
-                        name={repo.repo_name}
-                        description={repo.description}
-                        stars={repo.stars}
-                        url={repo.url}
-                        language={repo.language}
-                        onSave={async () => {
-                            try {
-                                const token = localStorage.getItem('token');
-                                if (!token)
-                                    throw new Error('Not authenticated');
+                {repos.map((repo) => {
+                    return (
+                        <RepoCard
+                            key={repo.repo_id}
+                            name={repo.repo_name}
+                            description={repo.description}
+                            stars={repo.stars}
+                            url={repo.url}
+                            language={repo.language}
+                            isFavorite={repo.isFavorite ?? false}
+                            onSave={async () => {
+                                try {
+                                    if (!token)
+                                        throw new Error('Not authenticated');
+                                    await saveRepoToFavorites(repo, token);
+                                    alert('Saved to favorites!');
 
-                                await saveRepoToFavorites(repo, token);
+                                    const newFavorites = [
+                                        ...favorites,
+                                        repo.repo_id,
+                                    ];
+                                    setFavorites(newFavorites);
 
-                                alert('Saved to favorites!');
-                            } catch (error) {
-                                if (error instanceof Error) {
-                                    console.error(
-                                        'GitHub API error:',
-                                        error.message
+                                    // Re-mark all repos with new favorites
+                                    setRepos((prevRepos) =>
+                                        markReposWithFavorites(
+                                            prevRepos,
+                                            newFavorites
+                                        )
                                     );
-                                    alert(
-                                        'Failed to save repo: ' + error.message
-                                    );
-                                } else {
-                                    console.error('Unknown error:', error);
-                                    alert('Something went wrong while saving.');
+                                } catch (error) {
+                                    alert('Failed to save repo');
+                                    console.error(error);
                                 }
-                            }
-                        }}
-                    />
-                ))}
+                            }}
+                        />
+                    );
+                })}
             </ul>
         </div>
     );
