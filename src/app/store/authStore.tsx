@@ -58,8 +58,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, [token]);
 
+    // Clear token, email and password fields
     const clearToken = () => {
         setToken(null);
+        setEmail('');
+        setPassword('');
+        setError('');
+
         localStorage.removeItem('token');
     };
 

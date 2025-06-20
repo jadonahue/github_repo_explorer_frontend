@@ -31,6 +31,10 @@ export default function LoginPage() {
             // localStorage.setItem('token', data.token); // This was original direct local storage
             setToken(data.token); // ✅ Test update the global store
 
+            // Reset email and password field to emtpy
+            setEmail('');
+            setPassword('');
+
             // Redirect to home or favorites after successful login
             router.push('/home');
         } catch (error) {

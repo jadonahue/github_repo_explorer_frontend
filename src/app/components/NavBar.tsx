@@ -23,7 +23,7 @@ const NavBar = () => {
         clearToken(); // clear from store
         localStorage.removeItem('token'); // clear from storage
         setIsLoggedIn(false);
-        router.push('/'); // Redirect to home or login page
+        router.push('/login'); // Redirect to home or login page
     };
 
     return (
