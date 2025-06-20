@@ -11,6 +11,7 @@ import { useRepoStore } from '../store/repoStore'; // Custom hook to access glob
 import { useAuthStore } from '../store/authStore';
 import RepoCard from '../components/RepoCard'; // Component for displaying individual repos
 import { markReposWithFavorites } from '../utils/markFavorites';
+import NavBar from '../components/NavBar';
 
 const HomePage = () => {
     // Destructure token from authStore
@@ -101,6 +102,7 @@ const HomePage = () => {
 
     return (
         <div>
+            <NavBar />
             <div>Home Page</div>
 
             {/* Search bar for GitHub username */}

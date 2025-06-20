@@ -20,8 +20,9 @@ interface AuthContextType {
     setPassword: (password: string) => void;
     error: string;
     setError: (error: string) => void;
-    token: string | null; // Testing hybrid persist
+    token: string | null;
     setToken: (token: string | null) => void;
+    clearToken: () => void;
 }
 
 /**
@@ -57,6 +58,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
     }, [token]);
 
+    const clearToken = () => {
+        setToken(null);
+        localStorage.removeItem('token');
+    };
+
     return (
         <AuthContext.Provider
             value={{
@@ -66,8 +72,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 setPassword,
                 error,
                 setError,
-                token, // Test
+                token,
                 setToken,
+                clearToken,
             }}
         >
             {children}
