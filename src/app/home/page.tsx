@@ -103,18 +103,22 @@ const HomePage = () => {
     return (
         <div>
             <NavBar />
-            <div>Home Page</div>
+            <div className='flex flex-col items-center justify-center py-10 space-y-4'>
 
-            {/* Search bar for GitHub username */}
-            <form onSubmit={handleSearch}>
-                <input
-                    type="text"
-                    placeholder="search github repos"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-                <button type="submit">Search</button>
-            </form>
+                <h2 className='font-bold text-3xl'>Home Page</h2>
+
+                {/* Search bar for GitHub username */}
+                <form onSubmit={handleSearch}>
+                    <input
+                        type="text"
+                        placeholder="Search github repos"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className='border rounded-2xl pl-6 py-2 mx-3'
+                    />
+                    <button type="submit" className='text-2xl'>Search</button>
+                </form>
+            </div>
 
             {/* Loading state */}
             {loading && <p>Loading...</p>}
@@ -123,7 +127,7 @@ const HomePage = () => {
             {error && <p style={{ color: 'red' }}>{error}</p>}
 
             {/* Display repos */}
-            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 px-8">
                 {repos.map((repo) => {
                     return (
                         <RepoCard
