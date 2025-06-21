@@ -27,7 +27,7 @@ const NavBar = () => {
     };
 
     return (
-        <nav className="w-full bg-amber-200 dark:bg-gray-900 text-gray-500 dark:text-cyan-200 px-4 py-3 flex justify-between items-center">
+        <nav className="w-full bg-amber-200 dark:bg-gray-900 text-gray-500 dark:text-cyan-200 px-8 py-3 flex justify-between items-center">
             <div className="text-lg font-bold">GitHub Repo Explorer</div>
             <div className="space-x-4">
                 {isLoggedIn ? (
