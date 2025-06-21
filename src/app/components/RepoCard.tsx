@@ -24,7 +24,7 @@ const RepoCard: React.FC<RepoCardProps> = ({
     return (
         <div className="bg-white shadow-md rounded-2xl p-4 space-y-2 hover:shadow-lg transition">
             <div className="flex justify-between items-start">
-                <h2 className="text-xl font-semibold text-blue-600">
+                <h2 className="text-xl font-semibold text-gray-500 dark:text-cyan-600">
                     <a href={url} target="_blank" rel="noopener noreferrer">
                         {name}
                     </a>
@@ -36,7 +36,7 @@ const RepoCard: React.FC<RepoCardProps> = ({
                         className={`px-4 py-2 rounded transition-colors duration-300 ${
                             isFavorite
                                 ? 'bg-red-500 hover:bg-red-600 text-white'
-                                : 'bg-blue-500 hover:bg-blue-600 text-white'
+                                : 'bg-amber-300 hover:bg-amber-400 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-gray-600 dark:text-white'
                         }`}
                     >
                         {isFavorite ? 'Unsave' : 'Save'}
