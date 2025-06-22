@@ -2,16 +2,13 @@
 export async function loginUser(email: string, password: string) {
     // Send POST request to backend login endpoint
     // Adjust BACKEND_URL to reflect your current backend path
-    const response = await fetch(
-        `https://github-repo-explorer-backend-cc0507034770.herokuapp.com/auth/login`,
-        {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email, password }),
-        }
-    );
+    const response = await fetch(`${process.env.NEXT_BACKEND_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+    });
 
     console.log('This is response: ', response);
 
@@ -30,13 +27,16 @@ export async function loginUser(email: string, password: string) {
 }
 
 export async function registerUser(email: string, password: string) {
-    const response = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-    });
+    const response = await fetch(
+        `${process.env.NEXT_BACKEND_URL}/auth/register`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+        }
+    );
 
     const data = await response.json();
 

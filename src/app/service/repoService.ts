@@ -18,7 +18,7 @@ export interface GitHubRepo {
 export async function searchGithubRepos(username: string, token: string) {
     const response = await fetch(
         // Adjust BACKEND_URL to reflect your current backend path
-        `${process.env.BACKEND_URL}/user/searchRepo?username=${username}`,
+        `${process.env.NEXT_BACKEND_URL}/user/searchRepo?username=${username}`,
         {
             headers: {
                 Authorization: `Bearer ${token}`, // Send token to backend for auth
@@ -60,21 +60,24 @@ export async function searchGithubRepos(username: string, token: string) {
  * Save a repository to the user's favorites via backend
  */
 export async function saveRepoToFavorites(repo: Repo, token: string) {
-    const response = await fetch(`${process.env.BACKEND_URL}/user/favorites`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // Include auth token in request header
-        },
-        body: JSON.stringify({
-            repo_id: repo.repo_id,
-            repo_name: repo.repo_name,
-            description: repo.description,
-            stars: repo.stars,
-            html_url: repo.url,
-            language: repo.language,
-        }),
-    });
+    const response = await fetch(
+        `${process.env.NEXT_BACKEND_URL}/user/favorites`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`, // Include auth token in request header
+            },
+            body: JSON.stringify({
+                repo_id: repo.repo_id,
+                repo_name: repo.repo_name,
+                description: repo.description,
+                stars: repo.stars,
+                html_url: repo.url,
+                language: repo.language,
+            }),
+        }
+    );
 
     const data = await response.json();
 
@@ -87,11 +90,14 @@ export async function saveRepoToFavorites(repo: Repo, token: string) {
 
 // Fetch saved favorites from backend
 export async function fetchFavorites(token: string): Promise<number[]> {
-    const response = await fetch(`${process.env.BACKEND_URL}/user/favorites`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
+    const response = await fetch(
+        `${process.env.NEXT_BACKEND_URL}/user/favorites`,
+        {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        }
+    );
 
     const data = await response.json();
 
@@ -115,7 +121,7 @@ export async function fetchFavorites(token: string): Promise<number[]> {
  */
 export async function unsaveRepoFromFavorites(repoId: number, token: string) {
     const response = await fetch(
-        `${process.env.BACKEND_URL}/user/favorites/${repoId}`,
+        `${process.env.NEXT_BACKEND_URL}/user/favorites/${repoId}`,
         {
             method: 'DELETE',
             headers: {
