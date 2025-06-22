@@ -17,7 +17,8 @@ export interface GitHubRepo {
  */
 export async function searchGithubRepos(username: string, token: string) {
     const response = await fetch(
-        `http://localhost:3001/user/searchRepo?username=${username}`,
+        // Adjust BACKEND_URL to reflect your current backend path
+        `${process.env.BACKEND_URL}/user/searchRepo?username=${username}`,
         {
             headers: {
                 Authorization: `Bearer ${token}`, // Send token to backend for auth
@@ -59,7 +60,7 @@ export async function searchGithubRepos(username: string, token: string) {
  * Save a repository to the user's favorites via backend
  */
 export async function saveRepoToFavorites(repo: Repo, token: string) {
-    const response = await fetch('http://localhost:3001/user/favorites', {
+    const response = await fetch(`${process.env.BACKEND_URL}/user/favorites`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -86,7 +87,7 @@ export async function saveRepoToFavorites(repo: Repo, token: string) {
 
 // Fetch saved favorites from backend
 export async function fetchFavorites(token: string): Promise<number[]> {
-    const response = await fetch('http://localhost:3001/user/favorites', {
+    const response = await fetch(`${process.env.BACKEND_URL}/user/favorites`, {
         headers: {
             Authorization: `Bearer ${token}`,
         },
@@ -114,7 +115,7 @@ export async function fetchFavorites(token: string): Promise<number[]> {
  */
 export async function unsaveRepoFromFavorites(repoId: number, token: string) {
     const response = await fetch(
-        `http://localhost:3001/user/favorites/${repoId}`,
+        `${process.env.BACKEND_URL}/user/favorites/${repoId}`,
         {
             method: 'DELETE',
             headers: {

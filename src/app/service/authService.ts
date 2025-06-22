@@ -1,7 +1,8 @@
 // loginUser handles the login API request
 export async function loginUser(email: string, password: string) {
     // Send POST request to backend login endpoint
-    const response = await fetch('http://localhost:3001/auth/login', {
+    // Adjust BACKEND_URL to reflect your current backend path
+    const response = await fetch(`${process.env.BACKEND_URL}/auth/login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -25,9 +26,8 @@ export async function loginUser(email: string, password: string) {
     return data;
 }
 
-
 export async function registerUser(email: string, password: string) {
-    const response = await fetch('http://localhost:3001/auth/register', {
+    const response = await fetch(`${process.env.BACKEND_URL}/auth/register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -43,4 +43,3 @@ export async function registerUser(email: string, password: string) {
 
     return data; // Should return { token: '...' }
 }
-
