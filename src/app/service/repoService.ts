@@ -18,7 +18,7 @@ export interface GitHubRepo {
 export async function searchGithubRepos(username: string, token: string) {
     const response = await fetch(
         // Adjust BACKEND_URL to reflect your current backend path
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/searchRepo?username=${username}`,
+        `${process.env.NEXT_BACKEND_URL}/user/searchRepo?username=${username}`,
         {
             headers: {
                 Authorization: `Bearer ${token}`, // Send token to backend for auth
@@ -61,7 +61,7 @@ export async function searchGithubRepos(username: string, token: string) {
  */
 export async function saveRepoToFavorites(repo: Repo, token: string) {
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/favorites`,
+        `${process.env.NEXT_BACKEND_URL}/user/favorites`,
         {
             method: 'POST',
             headers: {
@@ -91,7 +91,7 @@ export async function saveRepoToFavorites(repo: Repo, token: string) {
 // Fetch saved favorites from backend
 export async function fetchFavorites(token: string): Promise<number[]> {
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/favorites`,
+        `${process.env.NEXT_BACKEND_URL}/user/favorites`,
         {
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -121,7 +121,7 @@ export async function fetchFavorites(token: string): Promise<number[]> {
  */
 export async function unsaveRepoFromFavorites(repoId: number, token: string) {
     const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/favorites/${repoId}`,
+        `${process.env.NEXT_BACKEND_URL}/user/favorites/${repoId}`,
         {
             method: 'DELETE',
             headers: {
