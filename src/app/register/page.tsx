@@ -42,7 +42,7 @@ export default function RegisterPage() {
     };
 
     return (
-        <main className="flex items-center justify-center min-h-screen bg-gray-100">
+        <main className="flex flex-col items-center justify-center min-h-screen">
             <form
                 onSubmit={handleRegister}
                 className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm space-y-4"
@@ -88,11 +88,22 @@ export default function RegisterPage() {
 
                 <button
                     type="submit"
-                    className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700"
+                    className="w-full bg-amber-300 hover:bg-amber-400 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-gray-600 dark:text-white py-2 rounded-lg"
                 >
                     Sign Up
                 </button>
             </form>
+            <div className="mt-4 text-center">
+                <span className="text-sm text-gray-600 dark:text-slate-500">
+                    Already have an account?
+                </span>
+                <button
+                    onClick={() => router.push('/login')}
+                    className="ml-2 text-amber-400 dark:text-cyan-500 hover:underline"
+                >
+                    Login
+                </button>
+            </div>
         </main>
     );
 }

@@ -45,7 +45,7 @@ export default function LoginPage() {
     };
 
     return (
-        <main className="flex items-center justify-center min-h-screen">
+        <main className="flex flex-col items-center justify-center min-h-screen">
             <form
                 onSubmit={handleLogin}
                 className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm space-y-4"
@@ -82,11 +82,22 @@ export default function LoginPage() {
                 {/* Submit button */}
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                    className="w-full bg-amber-300 hover:bg-amber-400 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-gray-600 dark:text-white py-2 rounded-lg transition"
                 >
                     Log In
                 </button>
             </form>
+            <div className="mt-4 text-center">
+                <span className="text-sm text-gray-600 dark:text-slate-500">
+                    Don’t have an account?
+                </span>
+                <button
+                    onClick={() => router.push('/register')}
+                    className="ml-2 text-amber-400 dark:text-cyan-500 hover:underline"
+                >
+                    Register
+                </button>
+            </div>
         </main>
     );
 }
