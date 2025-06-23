@@ -103,20 +103,21 @@ const HomePage = () => {
     return (
         <div>
             <NavBar />
-            <div className='flex flex-col items-center justify-center py-10 space-y-4'>
-
-                <h2 className='font-bold text-3xl'>Home Page</h2>
+            <div className="flex flex-col items-center justify-center py-10 space-y-4">
+                <h2 className="font-bold text-3xl">Home Page</h2>
 
                 {/* Search bar for GitHub username */}
                 <form onSubmit={handleSearch}>
                     <input
                         type="text"
-                        placeholder="Search github repos"
+                        placeholder="Search github username"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className='border rounded-2xl pl-6 py-2 mx-3'
+                        className="w-60 border rounded-2xl px-8 py-2 mx-3"
                     />
-                    <button type="submit" className='text-2xl'>Search</button>
+                    <button type="submit" className="text-2xl">
+                        Search
+                    </button>
                 </form>
             </div>
 
