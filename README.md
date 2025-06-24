@@ -10,6 +10,8 @@ A Next.js + React client allowing users to search GitHub users repositories, aut
 
 [View the deployed frontend on Vercel](https://github-repo-explorer-frontend.vercel.app/login)
 
+Pro tip - Github Repo Explorer's theme color changes based on your operating systems current dark or light theme mode/setting.
+
 [Backend powered by and deployed to heroku](https://github.com/jadonahue/github_repo_explorer_backend)
 
 ---
