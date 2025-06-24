@@ -8,7 +8,9 @@ A Next.js + React client allowing users to search GitHub users repositories, aut
 
 ## Live Demo
 
-[View the deployed frontend on Vercel](https://github-repo-explorer-frontend-73qptgfj1.vercel.app/login)
+[View the deployed frontend on Vercel](https://github-repo-explorer-frontend.vercel.app/login)
+
+[Backend powered by and deployed to heroku](https://github.com/jadonahue/github_repo_explorer_backend)
 
 ---
 
