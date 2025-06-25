@@ -22,7 +22,7 @@ const FavoritesPage = () => {
 
             try {
                 const res = await fetch(
-                    'http://localhost:3001/user/favorites',
+                    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/favorites`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -85,7 +85,7 @@ const FavoritesPage = () => {
                                 onUnsave={async () => {
                                     try {
                                         const res = await fetch(
-                                            `http://localhost:3001/user/favorites/${repo.repo_id}`,
+                                            `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/favorites/${repo.repo_id}`,
                                             {
                                                 method: 'DELETE',
                                                 headers: {
