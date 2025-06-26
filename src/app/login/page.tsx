@@ -44,6 +44,16 @@ export default function LoginPage() {
 
     return (
         <main className="flex flex-col items-center justify-center min-h-screen">
+            <div className="text-center mb-10 px-4">
+                <h1 className="text-3xl font-bold">
+                    Discover Hidden Gems on GitHub
+                </h1>
+                <p className="mt-2 text-gray-600 dark:text-slate-500 text-sm max-w-md mx-auto">
+                    Search for trending, interesting, or personal repositories.
+                    Save your favorites, revisit them anytime, and explore the
+                    open-source universe.
+                </p>
+            </div>
             <form
                 onSubmit={handleLogin}
                 className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm space-y-4"
