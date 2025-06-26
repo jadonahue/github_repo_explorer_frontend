@@ -24,7 +24,7 @@ const RepoCard: React.FC<RepoCardProps> = ({
     return (
         <div className="bg-white shadow-md rounded-2xl p-4 space-y-2 hover:shadow-lg transition">
             <div className="flex justify-between items-start">
-                <h2 className="text-xl font-semibold text-gray-500 dark:text-cyan-600">
+                <h2 className="text-xl font-semibold truncate max-w-full text-gray-500 dark:text-cyan-600">
                     <a href={url} target="_blank" rel="noopener noreferrer">
                         {name}
                     </a>
