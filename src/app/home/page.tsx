@@ -203,13 +203,18 @@ const HomePage = () => {
                                 try {
                                     if (!token)
                                         throw new Error('Not authenticated');
+
+                                    const repoId = Number(repo.repo_id); // 🧪 normalize to number
+
                                     await unsaveRepoFromFavorites(
-                                        repo.repo_id,
+                                        repoId,
                                         token
                                     );
+
                                     const newFavorites = favorites.filter(
-                                        (id) => id !== repo.repo_id
-                                    );
+                                        (id) => Number(id) !== repoId
+                                    ); // 🧪 ensure match
+
                                     setFavorites(newFavorites);
                                     setRepos((prevRepos) =>
                                         markReposWithFavorites(
