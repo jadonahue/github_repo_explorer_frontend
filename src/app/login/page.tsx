@@ -27,9 +27,7 @@ export default function LoginPage() {
             // Call login service with email and password
             const data = await loginUser(email, password);
 
-            // Store token locally (for now using localStorage; could switch to cookies later)
-            // localStorage.setItem('token', data.token); // This was original direct local storage
-            setToken(data.token); // ✅ Test update the global store
+            setToken(data.token); // Store JWT token globally
 
             // Reset email and password field to emtpy
             setEmail('');
@@ -87,6 +85,8 @@ export default function LoginPage() {
                     Log In
                 </button>
             </form>
+
+            {/* Link to registration page */}
             <div className="mt-4 text-center">
                 <span className="text-sm text-gray-600 dark:text-slate-500">
                     Don’t have an account?

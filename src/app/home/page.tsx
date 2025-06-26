@@ -11,13 +11,14 @@ import { useRepoStore } from '../store/repoStore'; // Custom hook to access glob
 import { useAuthStore } from '../store/authStore';
 import RepoCard from '../components/RepoCard'; // Component for displaying individual repos
 import { markReposWithFavorites } from '../utils/markFavorites';
+import { usePathname } from 'next/navigation';
 import NavBar from '../components/NavBar';
 
 const HomePage = () => {
-    // Destructure token from authStore
+    // Get the current JWT token for authentication
     const { token } = useAuthStore();
 
-    // Destructure global state and updater functions from the store
+    // Destructure global state and setters for repos, search term, loading, error, favorites
     const {
         search, // GitHub username entered by user
         setSearch, // Updates the search input value
@@ -31,18 +32,54 @@ const HomePage = () => {
         setFavorites, // Sets favorite repos
     } = useRepoStore();
 
-    // On token change, load user's favorites from backend
+    // Get current route pathname (e.g., '/home')
+    const pathname = usePathname();
+
+    // When the user navigates to '/home' and token exists,
+    // reload favorites from backend and mark repos accordingly.
+    // This keeps favorites in sync when navigating back to home page.
+    useEffect(() => {
+        if (!token || pathname !== '/home') return; // Only run on /home with valid token
+
+        const updateFavoritesState = async () => {
+            try {
+                const ids = await fetchFavorites(token); // fetch user's favorite repo IDs
+                setFavorites(ids); // update favorites global store
+
+                // Normalize repo_id to number and mark favorites on existing repos
+                setRepos((prevRepos) =>
+                    markReposWithFavorites(
+                        prevRepos.map((r) => ({
+                            ...r,
+                            repo_id: Number(r.repo_id),
+                        })),
+                        ids
+                    )
+                );
+            } catch (error) {
+                console.error(
+                    'Error updating favorites on route change:',
+                    error
+                );
+            }
+        };
+
+        updateFavoritesState();
+    }, [pathname, token, setFavorites, setRepos]); // Runs when pathname/token change
+
+    // On initial token set or change, load favorites from backend,
+    // and mark repos accordingly
     useEffect(() => {
         const loadFavorites = async () => {
-            if (!token) return; // Exit if not logged in
+            if (!token) return; // exit early if no token
 
             try {
-                const ids = await fetchFavorites(token); // Get saved repo_ids
+                const ids = await fetchFavorites(token); // Get saved favorite repo IDs
                 console.log('Loaded favorites from backend:', ids);
 
-                setFavorites(ids); // Save favorites in global store
+                setFavorites(ids); // Update global favorites
 
-                // Update each repo's isFavorite flag based on saved IDs
+                // Update repos with isFavorite flag for rendering
                 setRepos((prevRepos) => markReposWithFavorites(prevRepos, ids));
             } catch (error) {
                 console.error('Failed to load favorites:', error);
@@ -52,7 +89,7 @@ const HomePage = () => {
         loadFavorites();
     }, [token, setFavorites, setRepos]);
 
-    // Handle form submit: fetch GitHub repos for given username
+    // Handle user submitting a search for GitHub username repos
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
@@ -63,21 +100,21 @@ const HomePage = () => {
                 throw new Error('User not authenticated');
             }
 
-            // Call backend -> GitHub API -> return repo list
+            // Search repos from backend (which calls GitHub API)
             const data = await searchGithubRepos(search, token);
 
-            // Normalize repo_id to number for consistent comparison
+            // Normalize repo_id to number for consistent ID matching
             const normalizedRepos = data.map((repo) => ({
                 ...repo,
                 repo_id: Number(repo.repo_id), // Ensure IDs are numbers for matching
             }));
 
-            // Reload fresh favorite IDs in case they changed
+            // Refresh favorites from backend to ensure current saved repos are synced
             const favoriteIds = (await fetchFavorites(token)).map((id) =>
                 Number(id)
             );
 
-            setFavorites(favoriteIds); // Sync global favorites state
+            setFavorites(favoriteIds); // Update favorites in global state
 
             //  Mark repos with isFavorite: true/false
             const updatedRepos = markReposWithFavorites(
