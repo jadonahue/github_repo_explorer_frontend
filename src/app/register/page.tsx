@@ -47,6 +47,15 @@ export default function RegisterPage() {
 
     return (
         <main className="flex flex-col items-center justify-center min-h-screen">
+            {/* Loading message */}
+            {loading && (
+                <div className="fixed inset-0 flex flex-col items-center justify-center bg-amber-200 dark:bg-gray-900 text-gray-500 dark:text-cyan-200 bg-opacity-80 z-50 space-y-4">
+                    <div className="w-12 h-12 border-4 border-gray-300 border-t-amber-300 dark:border-t-cyan-500 rounded-full animate-spin"></div>
+                    <span className="text-gray-700 dark:text-cyan-200 text-sm">
+                        Creating account...
+                    </span>
+                </div>
+            )}
             <form
                 onSubmit={handleRegister}
                 className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm space-y-4"
@@ -59,13 +68,6 @@ export default function RegisterPage() {
                 {error && (
                     <div className="text-red-500 text-sm text-center">
                         {error}
-                    </div>
-                )}
-
-                {/* Loading message */}
-                {loading && (
-                    <div className="text-center text-sm text-gray-500">
-                        Creating account, please wait...
                     </div>
                 )}
 

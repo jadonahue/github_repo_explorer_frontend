@@ -143,6 +143,16 @@ const HomePage = () => {
             <div className="flex flex-col items-center justify-center py-10 space-y-4">
                 <h2 className="font-bold text-3xl">Home Page</h2>
 
+                {/* Loading state */}
+                {loading && (
+                    <div className="fixed inset-0 flex flex-col items-center justify-center bg-amber-200 dark:bg-gray-900 text-gray-500 dark:text-cyan-200 bg-opacity-80 z-50 space-y-4">
+                        <div className="w-12 h-12 border-4 border-gray-300 border-t-amber-300 dark:border-t-cyan-500 rounded-full animate-spin"></div>
+                        <span className="text-gray-700 dark:text-cyan-200 text-sm">
+                            Loading repos...
+                        </span>
+                    </div>
+                )}
+
                 {/* Search bar for GitHub username */}
                 <form onSubmit={handleSearch}>
                     <input
@@ -157,9 +167,6 @@ const HomePage = () => {
                     </button>
                 </form>
             </div>
-
-            {/* Loading state */}
-            {loading && <p>Loading...</p>}
 
             {/* Error state */}
             {error && <p style={{ color: 'red' }}>{error}</p>}
