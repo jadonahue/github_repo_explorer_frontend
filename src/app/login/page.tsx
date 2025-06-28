@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { loginUser } from '../service/authService'; // Handles API login logic
 import { useAuthStore } from '../store/authStore'; // Custom hook for accessing global auth state
+import { useState } from 'react';
 
 export default function LoginPage() {
     const router = useRouter();
@@ -18,10 +19,14 @@ export default function LoginPage() {
         setToken,
     } = useAuthStore();
 
+    // Local state for showing loading spinner during login
+    const [loading, setLoading] = useState(false);
+
     // Handle form submit
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(''); // Reset error message
+        setLoading(true); // Start loading spinner
 
         try {
             // Call login service with email and password
@@ -39,6 +44,8 @@ export default function LoginPage() {
             // On failure, display a generic error
             console.error('Login error:', error);
             setError('Something went wrong. Try again.');
+        } finally {
+            setLoading(false); // Stop loading spinner
         }
     };
 
@@ -54,6 +61,16 @@ export default function LoginPage() {
                     open-source universe.
                 </p>
             </div>
+
+            {/* Loading login message */}
+            {loading && (
+                <div className="fixed inset-0 flex flex-col items-center justify-center bg-amber-200 dark:bg-gray-900 text-gray-500 dark:text-cyan-200 bg-opacity-80 z-50 space-y-4">
+                    <div className="w-12 h-12 border-4 border-gray-300 border-t-amber-300 dark:border-t-cyan-500 rounded-full animate-spin"></div>
+                    <span className="text-gray-700 dark:text-cyan-200 text-sm">
+                        Logging in...
+                    </span>
+                </div>
+            )}
             <form
                 onSubmit={handleLogin}
                 className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-sm space-y-4"
@@ -75,6 +92,7 @@ export default function LoginPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                    disabled={loading}
                 />
 
                 {/* Password input */}
@@ -85,12 +103,14 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     required
+                    disabled={loading}
                 />
 
                 {/* Submit button */}
                 <button
                     type="submit"
                     className="w-full bg-amber-300 hover:bg-amber-400 dark:bg-cyan-500 dark:hover:bg-cyan-600 text-gray-600 dark:text-white py-2 rounded-lg transition"
+                    disabled={loading}
                 >
                     Log In
                 </button>
@@ -104,6 +124,7 @@ export default function LoginPage() {
                 <button
                     onClick={() => router.push('/register')}
                     className="ml-2 text-amber-400 dark:text-cyan-500 hover:underline"
+                    disabled={loading}
                 >
                     Register
                 </button>
